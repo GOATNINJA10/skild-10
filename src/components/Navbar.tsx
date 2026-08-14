@@ -1,25 +1,50 @@
 import { Link } from "@tanstack/react-router";
-import {LogIn} from "lucide-react";
+import { LogIn, MoonStar, SunMedium } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const Navbar = () => {
-   return <nav className="navbar">
-        <div className="brand">
-            <div className="mark">
-                <div className="glyph">
-                </div>
-            </div>
-            <Link to="/">
-            <span>Skild</span>
-            </Link>
-        </div>
+  const [isDark, setIsDark] = useState<boolean>(() => {
+    if (typeof document === "undefined") return false;
+    const stored = localStorage.getItem("theme");
+    if (stored === "dark") return true;
+    if (stored === "light") return false;
+    return document.documentElement.classList.contains("dark");
+  });
 
-        <div className="actions">
-            <Link to="/sign-in/$" className="btn-primary">
-                <LogIn size="16" />
-                Sign In
-            </Link>
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", isDark);
+    document.documentElement.style.colorScheme = isDark ? "dark" : "light";
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+  }, [isDark]);
+
+  return (
+    <nav className="navbar">
+      <div className="brand">
+        <div className="mark">
+          <div className="glyph"></div>
         </div>
-    </nav>;
-}
- 
+        <Link to="/">
+          <span>Skild</span>
+        </Link>
+      </div>
+
+      <div className="actions">
+        <button
+          type="button"
+          aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+          onClick={() => setIsDark((current) => !current)}
+          className="theme-toggle"
+          title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+        >
+          {isDark ? <SunMedium size={16} /> : <MoonStar size={16} />}
+        </button>
+        <Link to="/sign-in/$" className="btn-primary">
+          <LogIn size="16" />
+          Sign In
+        </Link>
+      </div>
+    </nav>
+  );
+};
+
 export default Navbar;
