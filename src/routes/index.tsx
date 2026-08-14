@@ -41,7 +41,12 @@ function Home() {
 				<div>
 					{dummySkills.length > 0 ? (
 						<div className="skills-grid">
-							{dummySkills.map((skill) => (
+							{[...dummySkills].sort((a, b) => {
+								if (a.createdAt === null && b.createdAt === null) return 0;
+								if (a.createdAt === null) return 1;
+								if (b.createdAt === null) return -1;
+								return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+							}).map((skill) => (
 								<SkillCard key={skill.id} {...skill}/>
 							))}
 						</div>
