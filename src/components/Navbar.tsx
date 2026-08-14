@@ -1,3 +1,4 @@
+import { Show, UserButton } from "@clerk/tanstack-react-start";
 import { Link } from "@tanstack/react-router";
 import { LogIn, MoonStar, SunMedium } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -7,28 +8,16 @@ const Navbar = () => {
   const isInitializedRef = useRef(false);
 
   useEffect(() => {
-    // Read persisted theme after mount (SSR-safe)
-    const stored = localStorage.getItem("theme");
-    const isDarkValue =
-      stored === "dark"
-        ? true
-        : stored === "light"
-          ? false
-          : document.documentElement.classList.contains("dark");
-
-    // Apply resolved theme and persist
-    document.documentElement.classList.toggle("dark", isDarkValue);
-    document.documentElement.style.colorScheme = isDarkValue ? "dark" : "light";
-    localStorage.setItem("theme", isDarkValue ? "dark" : "light");
-
-    setIsDark(isDarkValue);
+    // On client mount, read current theme from document (set by pre-paint script)
+    setIsDark(document.documentElement.classList.contains("dark"));
     isInitializedRef.current = true;
   }, []);
 
   useEffect(() => {
-    // Preserve normal updates for subsequent isDark changes
+    // Skip on initial mount, only sync user-triggered theme changes
     if (!isInitializedRef.current) return;
 
+    // Sync theme changes to document and localStorage
     document.documentElement.classList.toggle("dark", isDark);
     document.documentElement.style.colorScheme = isDark ? "dark" : "light";
     localStorage.setItem("theme", isDark ? "dark" : "light");
@@ -55,10 +44,16 @@ const Navbar = () => {
         >
           {isDark ? <SunMedium size={16} /> : <MoonStar size={16} />}
         </button>
-        <Link to="/sign-in/$" className="btn-primary">
-          <LogIn size="16" />
-          Sign In
-        </Link>
+        <Show when="signed-in">
+          <UserButton />
+        </Show>
+
+        <Show when="signed-out">
+          <Link to="/sign-in/$" className="btn-primary">
+            <LogIn size="16" />
+            Sign In
+          </Link>
+        </Show>
       </div>
     </nav>
   );

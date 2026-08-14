@@ -35,7 +35,7 @@ function Home() {
 					</h2>
 					<p>
 						{" "}
-						Discover the latest agentic skills from the databse.
+						Discover the latest agentic skills from the database.
 					</p>
 				</div>
 				<div>
