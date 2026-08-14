@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Copy, CheckCircle, ArrowBigUp, MessageSquare, ArrowUpRight, Bookmark } from "lucide-react";
+import { Copy, CheckCircle, ArrowUpRight, Bookmark } from "lucide-react";
 import { useState } from "react";
 
 const SkillCard = ({
@@ -13,10 +13,14 @@ const SkillCard = ({
 }: SkillRecord) => {
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(installCommand);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(installCommand);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      // Handle rejected writes silently
+    }
   };
 
   return (
@@ -24,7 +28,7 @@ const SkillCard = ({
       <Link
         to="/skills"
         tabIndex={-1}
-        aria-label={`Open $ {title}`}
+        aria-label={`Open ${title}`}
         className="overlay"
       />
 
@@ -44,8 +48,8 @@ const SkillCard = ({
           <div className="author">
             <img src="/logo512.png" alt="Author avatar" className="avatar" />
             <div className="author-copy">
-              <p>GOATNINJA10</p>
-              <p>{new Date(createdAt as string).toLocaleDateString()}</p>
+              <p>{authorEmail || 'Anonymous'}</p>
+              <p>{createdAt ? new Date(createdAt).toLocaleDateString('en-US', { timeZone: 'UTC' }) : 'No date'}</p>
             </div>
           </div>
 
@@ -76,24 +80,13 @@ const SkillCard = ({
         </div>
 
         <div className="footer">
-          <div className="stats">
-            <button type="button" className="upvote" disabled>
-              <ArrowBigUp size={16} fill="currentColor" />
-              <span>{tags.length}</span>
-            </button>
-            <div className="comments">
-              <MessageSquare size={14} />
-              <span>{authorEmail ? 1 : 0}</span>
-            </div>
-          </div>
-
           <div className="actions">
             <Link to="/skills" className="open" title={`Open ${title}`}>
               <span>Open</span>
               <ArrowUpRight size={14} />
             </Link>
 
-            <button type="button" className="save" arial-label="Saved state" disabled>
+            <button type="button" className="save" aria-label="Saved state" disabled>
               <Bookmark size={16} />
             </button>
           </div>

@@ -3,13 +3,16 @@ import { LogIn, MoonStar, SunMedium } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const Navbar = () => {
-  const [isDark, setIsDark] = useState<boolean>(() => {
-    if (typeof document === "undefined") return false;
+  const [isDark, setIsDark] = useState<boolean>(false);
+
+  useEffect(() => {
     const stored = localStorage.getItem("theme");
-    if (stored === "dark") return true;
-    if (stored === "light") return false;
-    return document.documentElement.classList.contains("dark");
-  });
+    const fallback = document.documentElement.classList.contains("dark");
+    const resolved = stored === "dark" ? true : stored === "light" ? false : fallback;
+    setIsDark(resolved);
+    document.documentElement.classList.toggle("dark", resolved);
+    document.documentElement.style.colorScheme = resolved ? "dark" : "light";
+  }, []);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", isDark);
