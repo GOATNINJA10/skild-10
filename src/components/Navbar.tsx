@@ -1,17 +1,34 @@
 import { Link } from "@tanstack/react-router";
 import { LogIn, MoonStar, SunMedium } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const Navbar = () => {
-  const [isDark, setIsDark] = useState<boolean>(() => {
-    if (typeof document === "undefined") return false;
-    const stored = localStorage.getItem("theme");
-    if (stored === "dark") return true;
-    if (stored === "light") return false;
-    return document.documentElement.classList.contains("dark");
-  });
+  const [isDark, setIsDark] = useState(false);
+  const isInitializedRef = useRef(false);
 
   useEffect(() => {
+    // Read persisted theme after mount (SSR-safe)
+    const stored = localStorage.getItem("theme");
+    const isDarkValue =
+      stored === "dark"
+        ? true
+        : stored === "light"
+          ? false
+          : document.documentElement.classList.contains("dark");
+
+    // Apply resolved theme and persist
+    document.documentElement.classList.toggle("dark", isDarkValue);
+    document.documentElement.style.colorScheme = isDarkValue ? "dark" : "light";
+    localStorage.setItem("theme", isDarkValue ? "dark" : "light");
+
+    setIsDark(isDarkValue);
+    isInitializedRef.current = true;
+  }, []);
+
+  useEffect(() => {
+    // Preserve normal updates for subsequent isDark changes
+    if (!isInitializedRef.current) return;
+
     document.documentElement.classList.toggle("dark", isDark);
     document.documentElement.style.colorScheme = isDark ? "dark" : "light";
     localStorage.setItem("theme", isDark ? "dark" : "light");

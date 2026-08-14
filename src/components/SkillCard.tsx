@@ -13,10 +13,14 @@ const SkillCard = ({
 }: SkillRecord) => {
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(installCommand);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(installCommand);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      console.error("Failed to copy to clipboard:", error);
+    }
   };
 
   return (
@@ -45,7 +49,9 @@ const SkillCard = ({
             <img src="/logo512.png" alt="Author avatar" className="avatar" />
             <div className="author-copy">
               <p>GOATNINJA10</p>
-              <p>{new Date(createdAt as string).toLocaleDateString()}</p>
+              <p>
+                {createdAt ? new Date(createdAt).toLocaleDateString() : "Unknown date"}
+              </p>
             </div>
           </div>
 
