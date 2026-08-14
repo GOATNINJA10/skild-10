@@ -22,18 +22,23 @@ interface MyRouterContext {
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   head: () => ({
-    meta: [
-      {
-        charSet: 'utf-8',
-      },
-      {
-        name: 'viewport',
-        content: 'width=device-width, initial-scale=1',
-      },
-      {
-        title: 'TanStack Start Starter',
-      },
-    ],
+   meta: [
+			{
+				charSet: "utf-8",
+			},
+			{
+				name: "viewport",
+				content: "width=device-width, initial-scale=1",
+			},
+			{
+				title: "Skild - The Registry for Agentic Intelligence",
+			},
+			{
+				name: "description",
+				content:
+					"Discover, publish, and operate reusable agent capabilities from a route-driven workspace.",
+			},
+		],
     links: [
       {
         rel: 'stylesheet',
